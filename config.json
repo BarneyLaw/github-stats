@@ -1,0 +1,28 @@
+{
+  "username": "BarneyLaw",
+
+  "themes": ["github_dark", "graywhite", "tokyonight", "catppuccin_mocha", "transparent"],
+
+  "stats": {
+    "enabled": true,
+    "title": null,
+    "includeAllCommits": true,
+    "countPrivate": true,
+    "showIcons": true,
+    "hideRank": false,
+    "hideBorder": true,
+    "hideTitle": true,
+    "hide": []
+  },
+
+  "languages": {
+    "enabled": true,
+    "title": "Most Used Languages",
+    "hideBorder": true,
+    "hideTitle": false,
+    "count": 6,
+    "excludeRepos": [],
+    "excludeLanguages": [],
+    "countForks": false
+  }
+}

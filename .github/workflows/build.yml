@@ -1,0 +1,53 @@
+name: Build and deploy stats cards
+
+on:
+  # Keep the numbers fresh without a server sitting around waiting for requests.
+  schedule:
+    - cron: "0 */6 * * *"
+  # Rebuild whenever the renderer or config changes.
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege for the build, plus what actions/deploy-pages needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let a scheduled run race a manual one onto the same Pages site.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Render cards
+        env:
+          # A classic PAT with `repo` scope is what makes private commits and
+          # private repo languages visible. Without it the build still works,
+          # it just sees public activity only.
+          PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN || secrets.GITHUB_TOKEN }}
+        run: node src/index.js
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
